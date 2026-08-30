@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Restaurant Menu</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Header -->
+
+        <div class="header">
+
+            <h1>🍽 Restaurant Menu</h1>
+
+            <p>Order your favourite food</p>
+
+        </div>
+        <!-- Menu -->
+        <div class="menu-grid">
+
+            <!-- Burger -->
+            <div class="menu-item">
+                <img src="image/image1.webp" alt="Burger" class="food-image">
+
+                <h3>Burger - ₹299</h3>
+                <p>Juicy patty with fresh veggies</p>
+
+                <button class="add-btn" onclick="addToCart('Burger', 299)">
+                    Add to Cart
+                </button>
+            </div>
+
+            <!-- Pizza -->
+            <div class="menu-item">
+                <img src="image/image2.webp" alt="Pizza" class="food-image">
+
+                <h3>Pizza - ₹399</h3>
+                <p>Freshly baked with love</p>
+
+                <button class="add-btn" onclick="addToCart('Pizza', 399)">
+                    Add to Cart
+                </button>
+            </div>
+
+            <!-- Salad -->
+            <div class="menu-item">
+                <img src="image/image3.webp" alt="Salad" class="food-image">
+
+                <h3>Salad - ₹199</h3>
+                <p>Healthy and fresh ingredients</p>
+
+                <button class="add-btn" onclick="addToCart('Salad', 199)">
+                    Add to Cart
+                </button>
+            </div>
+
+            <!-- cup cake -->
+            <div class="menu-item">
+                <img src="image/image5.webp" alt="Cup cake" class="food-image">
+
+                <h3>Cup cake - ₹100</h3>
+                <p> Delicious freshly baked cupcake topped with rich frosting.</p>
+
+                <button class="add-btn" onclick="addToCart('Cup cake', 100)">
+                    Add to Cart
+                </button>
+            </div>
+
+            <!--  Tea -->
+            <div class="menu-item">
+                <img src="image/image6.webp" alt="Tea" class="food-image">
+                <h3>Tea - ₹20</h3>
+                <p>Freshly brewed hot tea</p>
+                <button class="add-btn" onclick="addToCart('Tea', 20)">Add to Cart</button>
+            </div>
+
+            <!-- Coffee -->
+            <div class="menu-item">
+                <img src="image/image4.webp" alt="Coffee" class="food-image">
+                <h3>Coffee - ₹99</h3>
+                <p>Freshly brewed perfection</p>
+                <button class="add-btn" onclick="addToCart('Coffee', 99)">Add to Cart</button>
+            </div>
+
+        </div>
+
+        <!-- Cart -->
+
+        <div class="cart-container">
+
+            <h2>🛒 Your Order</h2>
+
+            <div id="cart-items">
+
+            </div>
+
+
+            <div class="total-section">
+
+                <h3>
+                    Total: ₹<span id="total">0.00</span>
+                </h3>
+
+            </div>
+
+
+            <button class="order-btn" onclick="placeOrder()">
+                Place Order
+            </button>
+
+
+            <a href="backend/view_orders.php" class="admin-link">
+                📋 View All Orders
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // Cart array
+
+        let cart = [];
+
+
+        // Add item
+
+        function addToCart(item, price) {
+
+            const existingItem =
+                cart.find(
+                    cartItem =>
+                        cartItem.item === item
+                );
+
+
+            if (existingItem) {
+
+                existingItem.quantity++;
+
+            } else {
+
+                cart.push({
+                    item: item,
+                    price: price,
+                    quantity: 1
+                });
+
+            }
+
+
+            updateCart();
+
+        }
+
+
+        // Update cart
+
+        function updateCart() {
+
+            const cartContainer =
+                document.getElementById(
+                    "cart-items"
+                );
+
+            const totalElement =
+                document.getElementById(
+                    "total"
+                );
+
+
+            cartContainer.innerHTML = "";
+
+
+            if (cart.length === 0) {
+
+                cartContainer.innerHTML = `
+                <div class="empty-cart">
+                    🛒 Your cart is empty
+                </div>
+            `;
+
+                totalElement.textContent =
+                    "0.00";
+
+                return;
+
+            }
+
+
+            let total = 0;
+
+
+            cart.forEach(
+                (cartItem, index) => {
+
+                    const itemTotal =
+                        cartItem.price *
+                        cartItem.quantity;
+
+
+                    total += itemTotal;
+
+
+                    const div =
+                        document.createElement(
+                            "div"
+                        );
+
+                    div.className =
+                        "cart-item";
+
+
+                    div.innerHTML = `
+
+                    <div class="cart-info">
+
+                        <strong>
+                            ${cartItem.item}
+                        </strong>
+
+                        <br>
+
+                        <small>
+                            ₹${cartItem.price}
+                            ×
+                            ${cartItem.quantity}
+                            =
+                            ₹${itemTotal}
+                        </small>
+
+                    </div>
+
+
+                    <div class="quantity-controls">
+
+                        <button
+                            class="quantity-btn"
+                            onclick="changeQuantity(
+                                ${index},
+                                -1
+                            )"
+                        >
+                            −
+                        </button>
+
+
+                        <span class="quantity">
+                            ${cartItem.quantity}
+                        </span>
+
+
+                        <button
+                            class="quantity-btn"
+                            onclick="changeQuantity(
+                                ${index},
+                                1
+                            )"
+                        >
+                            +
+                        </button>
+
+
+                        <button
+                            class="delete-btn"
+                            onclick="removeFromCart(
+                                ${index}
+                            )"
+                        >
+                            Delete
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                    cartContainer.appendChild(div);
+
+                }
+            );
+
+
+            totalElement.textContent =
+                total.toFixed(2);
+
+        }
+
+
+        // Change quantity
+
+        function changeQuantity(
+            index,
+            change
+        ) {
+
+            if (
+                change === -1 &&
+                cart[index].quantity === 1
+            ) {
+
+                cart.splice(index, 1);
+
+            } else {
+
+                cart[index].quantity += change;
+
+            }
+
+
+            updateCart();
+
+        }
+
+
+        // Remove item
+
+        function removeFromCart(index) {
+
+            cart.splice(index, 1);
+
+            updateCart();
+
+        }
+
+
+        // Place order
+
+        function placeOrder() {
+
+            if (cart.length === 0) {
+
+                alert(
+                    "Your cart is empty!"
+                );
+
+                return;
+
+            }
+
+
+            const customerName =
+                prompt(
+                    "Enter your name:"
+                );
+
+
+            if (
+                !customerName ||
+                customerName.trim() === ""
+            ) {
+
+                alert(
+                    "Please enter your name."
+                );
+
+                return;
+
+            }
+
+
+            let total = 0;
+
+
+            cart.forEach(item => {
+
+                total +=
+                    item.price *
+                    item.quantity;
+
+            });
+
+
+            fetch(
+                "backend/save_order.php",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        name:
+                            customerName.trim(),
+
+                        items: cart,
+
+                        total: total
+
+                    })
+                }
+            )
+
+                .then(response => {
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Server returned HTTP " +
+                            response.status
+                        );
+
+                    }
+
+                    return response.json();
+
+                })
+
+                .then(data => {
+
+                    if (
+                        data.status ===
+                        "success"
+                    ) {
+
+                        alert(
+                            "✅ Order placed successfully!\n\n" +
+                            "Customer: " +
+                            customerName +
+                            "\nTotal: ₹" +
+                            total.toFixed(2)
+                        );
+
+
+                        cart = [];
+
+                        updateCart();
+
+                    } else {
+
+                        alert(
+                            "❌ Order failed!\n\n" +
+                            data.message
+                        );
+
+                    }
+
+                })
+
+                .catch(error => {
+
+                    console.error(
+                        "Error:",
+                        error
+                    );
+
+
+                    alert(
+                        "❌ Unable to connect to server.\n\n" +
+                        "Make sure Apache and MySQL are running in XAMPP."
+                    );
+
+                });
+
+        }
+
+
+        // Initial cart
+
+        updateCart();
+
+    </script>
+
+</body>
+
+</html>
